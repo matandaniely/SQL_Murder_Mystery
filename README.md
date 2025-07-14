@@ -5,7 +5,6 @@ Welcome to the SQL Murder Mystery — an engaging data exploration challenge des
 --Project Overview--
 
 In this project, I used SQLite and pandas in Python to explore a database filled with clues, suspects, and witness statements. The database contains multiple tables such as crime_scene_report, interview, person, and more. The goal is to solve a murder mystery by writing smart queries that reveal the killer's identity, the method, and the motive.
-<img width="1470" height="956" alt="Screenshot 2025-07-14 at 12 10 07" src="https://github.com/user-attachments/assets/76bea831-2b34-46c5-bc68-f067124f3e5c" />
 
 The project is also a fun way to practice:
 
