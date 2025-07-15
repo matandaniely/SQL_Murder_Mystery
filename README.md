@@ -35,6 +35,7 @@ import pandas as pd
 con = sqlite3.connect('sql-murder-mystery.db')
 pd.set_option('display.max_colwidth', None)
 
+
 2. List all tables in the database
 q = """
 SELECT name 
@@ -42,6 +43,10 @@ FROM sqlite_master
 WHERE type = 'table'
 """
 pd.read_sql(q, con)
+
+<img width="280" height="433" alt="2" src="https://github.com/user-attachments/assets/15e6db6d-3a9a-4d68-a602-f28b28fbc6ea" />
+
+
 
 3. Check the structure of a table
 q = """
