@@ -64,6 +64,7 @@ FROM crime_scene_report
 WHERE city = 'SQL City' AND date = '20180115' AND type = 'murder'
 """
 pd.read_sql(q, con)
+<img width="916" height="258" alt="4" src="https://github.com/user-attachments/assets/c24104f9-2452-41b1-8f8d-50c1e6d09ab5" />
 
 5. Identify potential suspects using address-based filters
 q = """
@@ -82,6 +83,7 @@ FROM person
 WHERE address_street_name = "Franklin Ave" AND name LIKE 'Annabel%'
 """
 pd.read_sql(q, con)
+<img width="670" height="430" alt="5" src="https://github.com/user-attachments/assets/ff94ad32-b841-42bd-b39c-5573a1edc267" />
 
 
 6. Investigate all interviews
@@ -113,6 +115,7 @@ JOIN interview ON person.id = interview.person_id
 WHERE address_street_name = "Franklin Ave" AND name LIKE 'Annabel%'
 """
 pd.read_sql(q, con)
+<img width="919" height="699" alt="7" src="https://github.com/user-attachments/assets/ba860cf0-743f-4d69-8a4a-6bad73c48930" />
 
 
 8. Find the suspect using a license plate fragment
@@ -122,6 +125,7 @@ FROM drivers_license
 WHERE plate_number LIKE '%H42W%' AND gender = 'male'
 """
 pd.read_sql(q, con)
+<img width="661" height="229" alt="8" src="https://github.com/user-attachments/assets/498832bf-36b3-43ed-882b-16dfedb9ccb7" />
 
 
 9. Narrow down gym members using membership and check-in data
@@ -136,39 +140,45 @@ FROM get_fit_now_member
 JOIN members ON get_fit_now_member.id = members.membership_id
 """
 pd.read_sql(q, con)
+<img width="901" height="382" alt="9" src="https://github.com/user-attachments/assets/2541c2c5-d4a1-4816-b61d-8ac8692dcb99" />
 
 
-10. Combine multiple filters to confirm suspects
-q = """
-SELECT person.*, drivers_license.*
-FROM person
-JOIN drivers_license ON person.license_id = drivers_license.id
-WHERE plate_number LIKE '%H42W%' AND gender = 'male'
-  AND height BETWEEN 65 AND 70
-  AND hair_color = 'red'
-  AND car_make = 'Tesla'
-  AND car_model = 'Model S'
-"""
-pd.read_sql(q, con)
-
-
-11. Final clue: Interviews of key suspects
-q = """
-SELECT p1.*, i1.*
-FROM (
-    SELECT *
-    FROM person
-    WHERE name = 'Jeremy Bowers'
-) AS p1
-JOIN interview AS i1 ON p1.id = i1.person_id
-"""
-pd.read_sql(q, con)
-
-
-12. Solve the mystery and catch the killer
+10. Final clue: Who attended the concert 3 times in december?
 q = """
 SELECT *
-FROM solution
-WHERE description LIKE '%Jeremy Bowers%'
+FROM facebook_event_checkin
+WHERE event_name = 'SQL Symphony Concert' AND date LIKE '201712%'
+GROUP BY person_id
+HAVING COUNT(*) = 3
+ORDER BY person_id
 """
 pd.read_sql(q, con)
+<img width="525" height="323" alt="10" src="https://github.com/user-attachments/assets/ca923c8e-6b8f-4c7e-90cc-83dc68786d3f" />
+
+
+11. Solve the mystery and catch the killer
+q = """
+WITH event_checkins AS (
+SELECT *
+FROM facebook_event_checkin
+WHERE event_name = 'SQL Symphony Concert' AND date LIKE '201712%'
+GROUP BY person_id
+HAVING COUNT(*) = 3
+ORDER BY person_id
+),
+
+suspects AS (
+SELECT id, name, license_id, ssn
+FROM person 
+JOIN event_checkins ON person.id = event_checkins.person_id
+)
+
+SELECT *
+FROM suspects
+JOIN income ON suspects.ssn = income.ssn
+"""
+
+pd.read_sql(q, con)
+
+<img width="559" height="491" alt="11" src="https://github.com/user-attachments/assets/0be51697-e09a-44dd-bee3-1b9434fd441e" />
+
